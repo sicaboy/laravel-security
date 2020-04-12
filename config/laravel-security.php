@@ -2,19 +2,6 @@
 
 return [
 
-    'multi_factor_authentication' => [
-        'enabled' => false,
-        'template' => 'laravel-security.mfa.form',
-        'code_expire_after_minutes' => 10,
-        'email' => [
-            //'mailable' => Sicaboy\LaravelSecurity\Mail\AuthenticationCodeMailable::class,
-            'template' => 'laravel-security::emails.authentication-code',
-            'subject' => 'Login authentication code',
-        ],
-        // @todo
-        // 'sms' => []
-    ],
-
     'password_policy' => [
         // Delete accounts with days of no activity
         'auto_delete_inactive_accounts' => [

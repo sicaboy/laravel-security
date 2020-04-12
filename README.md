@@ -2,18 +2,11 @@
 
 [![Latest Stable Version](https://poser.pugx.org/sicaboy/laravel-security/v/stable.svg)](https://packagist.org/packages/sicaboy/laravel-security)
 [![License](https://poser.pugx.org/sicaboy/laravel-security/license.svg)](LICENSE.md)
-[![Quality Score](https://img.shields.io/scrutinizer/g/sicaboy/laravel-security.svg?style=flat-square)](https://scrutinizer-ci.com/g/sicaboy/laravel-security)
 [![Total Downloads](https://img.shields.io/packagist/dt/sicaboy/laravel-security.svg?style=flat-square)](https://packagist.org/packages/sicaboy/laravel-security)
 
 ## Introduction
 
 This package can be used to enhance the user security of Laravel projects.
-
-- **Verify the user provided password is not one of the top 10,000 worst passwords** as analyzed by a respectable IT security analyst. Read about all 
-[ here](https://xato.net/10-000-top-passwords-6d6380716fe0#.473dkcjfm),
-[here(wired)](http://www.wired.com/2013/12/web-semantics-the-ten-thousand-worst-passwords/) or
-[here(telegram)](http://www.telegraph.co.uk/technology/internet-security/10303159/Most-common-and-hackable-passwords-on-the-internet.html)
-
 
 ## Installation
 
@@ -52,6 +45,12 @@ Siaboy\LaravelSecurity\LaravelSecurityServiceProvider::class,
 
 ## Disallow user to use a common password or a used password
 
+**Verify the user provided password is not one of the top 10,000 worst passwords** as analyzed by a respectable IT security analyst. Read about all 
+[ here](https://xato.net/10-000-top-passwords-6d6380716fe0#.473dkcjfm),
+[here(wired)](http://www.wired.com/2013/12/web-semantics-the-ten-thousand-worst-passwords/) or
+[here(telegram)](http://www.telegraph.co.uk/technology/internet-security/10303159/Most-common-and-hackable-passwords-on-the-internet.html)
+
+
 #### Available validators rules
 
 - [NotCommonPassword](src/Rules/NotCommonPassword.php) - Avoid user to use a common used password
@@ -81,7 +80,7 @@ public function rules()
 }
 ```
 
-#### Caution: extra event you need to call 
+#### CAUTION: Extra event you need to call 
 
 Login and reigster events are automatically traced.
 While there is an extra event you should add to call explicitly. 
@@ -158,22 +157,7 @@ protected function schedule(Schedule $schedule)
 
 ## Multi-factor Authentication
 
-1. Enable function needed by setting config `enabled` to `true` in `config/laravel-security.php`
-
-```php
-'multi_factor_authentication' => [
-    'enabled' => true,
-    ...
-]
-```
-
-2. Attach the middleware to your routes to protect your pages.
-
-```php
-Route::middleware(['mfa'])->group(function () {
-    ...
-});
-```
+This feature has been moved to [sicaboy/laravel-mfa](https://github.com/sicaboy/laravel-mfa)
 
 
 ## Change log

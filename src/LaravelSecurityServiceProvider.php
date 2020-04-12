@@ -26,8 +26,6 @@ class LaravelSecurityServiceProvider extends ServiceProvider
     {
         $this->app->register(\Sicaboy\LaravelSecurity\Providers\EventServiceProvider::class);
 
-        $this->app['router']->aliasMiddleware('mfa', \Sicaboy\LaravelSecurity\Http\Middleware\MFA::class);
-
         $this->app['router']->aliasMiddleware('security', \Sicaboy\LaravelSecurity\Http\Middleware\Security::class);
         
         // $this->app['router']->pushMiddlewareToGroup('web', MyPackage\Middleware\WebOne::class);
@@ -37,9 +35,7 @@ class LaravelSecurityServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang/', 'laravel-security');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-
-        $this->registerRoutes();
-
+        
         $this->registerPublishing();
 
     }
@@ -66,33 +62,5 @@ class LaravelSecurityServiceProvider extends ServiceProvider
         }
     }
 
-
-    /**
-     * Register the package routes.
-     *
-     * @return void
-     */
-    protected function registerRoutes()
-    {
-        Route::group($this->routeConfiguration(), function () {
-//            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-        });
-    }
-
-    /**
-     * Get the Nova route group configuration array.
-     *
-     * @return array
-     */
-    protected function routeConfiguration()
-    {
-        return [
-            'namespace' => 'Sicaboy\LaravelSecurity\Http\Controllers',
-            'prefix' => 'security',
-            'as' => 'security.',
-            'middleware' => 'web',
-        ];
-    }
 
 }
