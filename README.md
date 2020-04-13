@@ -161,15 +161,9 @@ This feature has been moved to [sicaboy/laravel-mfa](https://github.com/sicaboy/
 
 ## TODO
 
-- Add index to DB user_id
-
 - Ability to split `extended_security` table to multiple tables. or other methods to support websites with huge user mount.
 
-- Crom to remove too old password records to avoid heavy table. 
-
-## Thanks
-
-- Special thanks to [@dwoon](https://github.com/dwoon) for constructive suggestions.
+- Add cron job to remove too old password records to avoid heavy table. 
 
 ## Changelog
 
