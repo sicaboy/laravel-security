@@ -35,7 +35,9 @@ class LaravelSecurityServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang/', 'laravel-security');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        
+
+        $this->registerRoutes();
+
         $this->registerPublishing();
 
     }
@@ -56,11 +58,36 @@ class LaravelSecurityServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config' => config_path(),
 //                __DIR__.'/../database/migrations' => database_path('migrations'),
-                __DIR__.'/../resources/lang' => resource_path('lang'),
+                __DIR__.'/../resources/lang' => resource_path('lang/vendor/laravel-security'),
                 __DIR__.'/../resources/views' => resource_path('views/vendor/laravel-security'),
             ], 'laravel-security');
         }
     }
 
-
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    protected function registerRoutes()
+    {
+        Route::group($this->routeConfiguration(), function () {
+//            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+    }
+    /**
+     * Get the Nova route group configuration array.
+     *
+     * @return array
+     */
+    protected function routeConfiguration()
+    {
+        return [
+            'namespace' => 'Sicaboy\LaravelSecurity\Http\Controllers',
+            'prefix' => 'security',
+            'as' => 'security.',
+            'middleware' => 'web',
+        ];
+    }
 }

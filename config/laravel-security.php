@@ -19,6 +19,10 @@ return [
         'auto_lockout_inactive_accounts' => [
             'enabled' => false,
             'days_after_last_login' => 90,
+            'locked_account_closure' => function() {
+                \Illuminate\Support\Facades\Auth::logout();
+                return redirect()->route('security.account-locked');
+            },
             'email_notification' => [
                 'enabled' => true,
                 //'mailable' => Sicaboy\LaravelSecurity\Mail\AccountLockedMailable::class,

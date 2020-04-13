@@ -53,7 +53,7 @@ class NotAUsedPassword implements Rule
 
     public function message(): string
     {
-        return __('laravel-security.not_a_used_password', [
+        return __('laravel-security::message.not_a_used_password', [
             // 'attribute' => $this->attribute,
             // 'model' => $classBasename,
         ]);

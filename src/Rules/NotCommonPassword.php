@@ -29,7 +29,7 @@ class NotCommonPassword implements Rule
 
     public function message(): string
     {
-        return __('laravel-security.not_common_password', [
+        return __('laravel-security::message.not_common_password', [
             'attribute' => $this->attribute,
         ]);
 
