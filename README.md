@@ -26,7 +26,7 @@ Then do vendor publish:
 php artisan vendor:publish --provider="Sicaboy\LaravelSecurity\LaravelSecurityServiceProvider"
 ```
 
-After publish, you are able to modify templates and config in:
+After publishing, you can modify templates and config in:
 
 ```
 app/config/laravel-security.php
@@ -45,7 +45,7 @@ Siaboy\LaravelSecurity\LaravelSecurityServiceProvider::class,
 
 ## Disallow user to use a common password or a used password
 
-**Verify the user provided password is not one of the top 10,000 worst passwords** as analyzed by a respectable IT security analyst. Read about all 
+**Verify the user-provided password is not one of the top 10,000 worst passwords** as analyzed by a respectable IT security analyst. Read about all 
 [ here](https://xato.net/10-000-top-passwords-6d6380716fe0#.473dkcjfm),
 [here(wired)](http://www.wired.com/2013/12/web-semantics-the-ten-thousand-worst-passwords/) or
 [here(telegram)](http://www.telegraph.co.uk/technology/internet-security/10303159/Most-common-and-hackable-passwords-on-the-internet.html)
@@ -82,7 +82,7 @@ public function rules()
 
 #### CAUTION: Extra event you need to call 
 
-Login and reigster events are automatically traced.
+User login and register events have been automatically traced.
 While there is an extra event you should add to call explicitly. 
 
 ```php
@@ -95,7 +95,7 @@ event(new \Illuminate\Auth\Events\PasswordReset($user));
 #### Available policies
 
 - Delete accounts with days of no activity
-- Lock out accounts with days of no activity
+- Lockout accounts with days of no activity
 - Force change password every x days
 
 1. To enable the first two policies, you need to set `enabled` to `true` in `config/laravel-security.php` as below:
@@ -137,7 +137,7 @@ and set `enabled` to `true` and `change_password_url` in `config/laravel-securit
 ]
 ```
 
-3. Add the following commands to `app/Console/Kernel.php` of your application. **Impelemt to one instance if uding web server clusters**
+3. Add the following commands to `app/Console/Kernel.php` of your application. **Implement to one instance if using web server clusters**
 
 ```php
 protected function schedule(Schedule $schedule)
@@ -149,7 +149,7 @@ protected function schedule(Schedule $schedule)
     ...
 }
 ```
-3. Make sure you add the [Laravel scheduler](https://laravel.com/docs/7.x/scheduling#introduction) in your crontab  **Impelemt to one instance if uding web server clusters**
+3. Make sure you add the [Laravel scheduler](https://laravel.com/docs/7.x/scheduling#introduction) in your crontab  **Implement to one instance if using web server clusters**
 
 ```
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
@@ -159,11 +159,11 @@ protected function schedule(Schedule $schedule)
 
 This feature has been moved to [sicaboy/laravel-mfa](https://github.com/sicaboy/laravel-mfa)
 
-## TO DO
+## TODO
 
-- Add index to db user_id
+- Add index to DB user_id
 
-- Abolity to split `extended_security` table to multiple tables. or other methods to support websites with huge user mount.
+- Ability to split `extended_security` table to multiple tables. or other methods to support websites with huge user mount.
 
 - Crom to remove too old password records to avoid heavy table. 
 
@@ -171,7 +171,7 @@ This feature has been moved to [sicaboy/laravel-mfa](https://github.com/sicaboy/
 
 - Special thanks to [@dwoon](https://github.com/dwoon) for constructive suggestions.
 
-## Change log
+## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 

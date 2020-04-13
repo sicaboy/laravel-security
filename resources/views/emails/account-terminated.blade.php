@@ -8,6 +8,6 @@
         Your account has been terminated due to {{ $days }} days of no activity.
     </p>
     <p>
-        If you have any questions, please do not hesitate to contact admin.
+        If you have any questions, please do not hesitate to contact the administrator.
     </p>
 @stop
