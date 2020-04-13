@@ -24,13 +24,13 @@ class CreateLaravelSecurityTables extends Migration
         if (!config('laravel-security')) {
             throw new \Exception('Cannot read config [laravel-security]. Have you done vendor:publish?');
         }
-        Schema::create(config('laravel-security.database.password_history_table'), function (Blueprint $table) {
+        Schema::create(config('laravel-security.database.password_history_table', 'password_history'), function (Blueprint $table) {
             $table->increments('id');
             $table->bigInteger('user_id')->index();
             $table->string('password', 60);
             $table->timestamps();
         });
-        Schema::create(config('laravel-security.database.user_security_table'), function (Blueprint $table) {
+        Schema::create(config('laravel-security.database.user_security_table', 'user_extend_security'), function (Blueprint $table) {
             $table->increments('id');
             $table->bigInteger('user_id')->index();
             $table->date('last_loggein_at')->nullable();
