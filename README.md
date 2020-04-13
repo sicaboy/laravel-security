@@ -137,7 +137,7 @@ and set `enabled` to `true` and `change_password_url` in `config/laravel-securit
 ]
 ```
 
-3. Add the following commands to `app/Console/Kernel.php` of your application
+3. Add the following commands to `app/Console/Kernel.php` of your application. **Impelemt to one instance if uding web server clusters**
 
 ```php
 protected function schedule(Schedule $schedule)
@@ -149,7 +149,7 @@ protected function schedule(Schedule $schedule)
     ...
 }
 ```
-3. Make sure you add the [Laravel scheduler](https://laravel.com/docs/7.x/scheduling#introduction) in your crontab 
+3. Make sure you add the [Laravel scheduler](https://laravel.com/docs/7.x/scheduling#introduction) in your crontab  **Impelemt to one instance if uding web server clusters**
 
 ```
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
@@ -159,6 +159,17 @@ protected function schedule(Schedule $schedule)
 
 This feature has been moved to [sicaboy/laravel-mfa](https://github.com/sicaboy/laravel-mfa)
 
+## TO DO
+
+- Add index to db user_id
+
+- Abolity to split `extended_security` table to multiple tables. or other methods to support websites with huge user mount.
+
+- Crom to remove too old password records to avoid heavy table. 
+
+## Thanks
+
+- Special thanks to [@dwoon](https://github.com/dwoon) for constructive suggestions.
 
 ## Change log
 
