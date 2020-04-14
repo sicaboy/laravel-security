@@ -71,9 +71,7 @@ public function rules()
             'regex:/[0-9]/',      // must contain at least one digit
             //...
             new \Sicaboy\LaravelSecurity\Rules\NotCommonPassword(),
-            new \Sicaboy\LaravelSecurity\Rules\NotAUsedPassword(),
-            // or only check used password for a specific user (e.g. on user password change):
-            // new \Sicaboy\LaravelSecurity\Rules\NotAUsedPassword($userId),
+            new \Sicaboy\LaravelSecurity\Rules\NotAUsedPassword($userId),
             // Also you need to call event, examples in the next section
         ],
     ];
@@ -88,6 +86,11 @@ While there is an extra event you should add to call explicitly.
 ```php
 // Call on user password change
 event(new \Illuminate\Auth\Events\PasswordReset($user));
+
+// If you are using custom login, register and reset password actions which are not the Laravel built-in ones, you will need to call event in your function accordingly.
+event(new \Illuminate\Auth\Events\Login($user)); 
+event(new \Illuminate\Auth\Events\Registered($user));
+event(new \Illuminate\Auth\Events\PasswordReset($user)); 
 ```
 
 ## Password Policies
@@ -161,15 +164,9 @@ This feature has been moved to [sicaboy/laravel-mfa](https://github.com/sicaboy/
 
 ## TODO
 
-- Add index to DB user_id
-
 - Ability to split `extended_security` table to multiple tables. or other methods to support websites with huge user mount.
 
-- Crom to remove too old password records to avoid heavy table. 
-
-## Thanks
-
-- Special thanks to [@dwoon](https://github.com/dwoon) for constructive suggestions.
+- Add cron job to remove too old password records to avoid heavy table. 
 
 ## Changelog
 
