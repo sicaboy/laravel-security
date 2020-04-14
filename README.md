@@ -119,7 +119,7 @@ event(new \Illuminate\Auth\Events\PasswordReset($user));
 ]
 ```
 
-2. To enable the policy "force user change password every x days", you will need to use this middleware
+2. To reject locked accounts and force user to change their password every x days, you will need to use this middleware
 
 ```php
 Route::middleware(['security'])->group(function () {
