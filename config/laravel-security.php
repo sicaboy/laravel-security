@@ -2,6 +2,12 @@
 
 return [
 
+    'login_route' => 'login',
+
+    'auth_user_closure' => function() {
+        return \Illuminate\Support\Facades\Auth::user();
+    },
+
     'password_policy' => [
         // Delete accounts with days of no activity
         'auto_delete_inactive_accounts' => [

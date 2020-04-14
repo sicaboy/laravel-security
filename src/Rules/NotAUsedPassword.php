@@ -36,6 +36,9 @@ class NotAUsedPassword implements Rule
 
     public function passes($attribute, $value): bool
     {
+        if (!$this->userId) {
+            return true;
+        }
         // $this->attribute = $attribute;
         $model = $this->modelClassName::select('password');
         if(!empty($this->userId)) {

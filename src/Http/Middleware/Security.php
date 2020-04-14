@@ -30,9 +30,12 @@ class Security
     public function handle($request, Closure $next)
     {
         // If user not login
-        $this->user = Auth::user();
+        $closure = config('laravel-security.auth_user_closure', function() {
+            return Auth::user();
+        });
+        $this->user = call_user_func($closure);
         if (!$this->user) {
-            return redirect()->route('login');
+            return redirect()->route(config('laravel-mfa.login_route', 'login'));
         }
 
         if ($redirect = $this->handleCheckLockedAccount()) {
