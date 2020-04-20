@@ -71,11 +71,11 @@ public function rules()
             'regex:/[0-9]/',      // must contain at least one digit
             //...
             new \Sicaboy\LaravelSecurity\Rules\NotCommonPassword(),
-            new \Sicaboy\LaravelSecurity\Rules\NotAUsedPassword($userId),
-            // Also you need to call event, examples in the next section
+            new \Sicaboy\LaravelSecurity\Rules\NotAUsedPassword($user),
         ],
     ];
 }
+// Also you need to call event, examples in the next section
 ```
 
 #### CAUTION: Extra event you need to call 
@@ -93,9 +93,9 @@ event(new \Illuminate\Auth\Events\Registered($user));
 event(new \Illuminate\Auth\Events\PasswordReset($user)); 
 ```
 
-## Password Policies
+## Usage
 
-#### Available policies
+#### Password Policies
 
 - Delete accounts with days of no activity
 - Lockout accounts with days of no activity
@@ -104,6 +104,7 @@ event(new \Illuminate\Auth\Events\PasswordReset($user));
 1. To enable the first two policies, you need to set `enabled` to `true` in `config/laravel-security.php` as below:
 
 ```php
+...
 'password_policy' => [
     // Delete accounts with days of no activity
     'auto_delete_inactive_accounts' => [
@@ -117,6 +118,7 @@ event(new \Illuminate\Auth\Events\PasswordReset($user));
         ...
     ],
 ]
+...
 ```
 
 2. To reject locked accounts and force user to change their password every x days, you will need to use this middleware
@@ -127,17 +129,49 @@ Route::middleware(['security'])->group(function () {
 });
 ```
 
-and set `enabled` to `true` and `change_password_url` in `config/laravel-security.php` as below:
+### If Using Different User Objects
+
+ - If you use different `User` objects, for example a traditional `App\User` and a customize admin user, you can write middleware this way:
+ 
+```php
+Route::middleware(['security:admin'])->group(function () {
+  ...
+});
+```
+
+ - Add config group in your `config/laravel-security.php`
+ 
+```php
+ return [
+     'default' => [
+         ...
+     ],
+     'group' 
+         'admin' => [ // Example, when using middleware 'security:admin'. Attributes not mentioned will be inherit from `default` above
+            ...
+         ],
+         'other_name' => [ // Middleware 'security:other_name'
+             ...
+         ]
+     ],
+ ```
+
+
+2. To enable `Force change password every x days` you need to set `enabled` to `true` and `change_password_url` in `config/laravel-security.php` as below:
 
 ```php
+...
 'password_policy' => [
+    ...
     // Force change password every x days
     'force_change_password' => [
         'enabled' => true,
         'days_after_last_change' => 90, // every 90 days
         'change_password_url' => '/user/change-password', // Change My Password page URL
     ],
+    ...
 ]
+...
 ```
 
 3. Add the following commands to `app/Console/Kernel.php` of your application. **Implement to one instance if using web server clusters**
