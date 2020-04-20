@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Session;
 class MessageController extends Controller
 {
     public function getAccountLocked(Request $request) {
+        Auth::logout();
         return view('laravel-security::account-locked', []);
     }
 }

@@ -7,12 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PasswordHistory extends Model
 {
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['user_id', 'password'];
+    protected $guarded = ['id'];
 
     /**
      * Create a new Eloquent model instance.
@@ -29,7 +24,10 @@ class PasswordHistory extends Model
 
     public function user()
     {
-        return $this->belongsTo(config('laravel-security.database.user_model') ?: 'App\User');
+        if (!$this->user_class) {
+            return null;
+        }
+        return $this->belongsTo($this->user_class ?: 'App\User');
     }
 
 }

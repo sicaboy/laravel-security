@@ -28,6 +28,7 @@ class InsertUsedPassword
         $modelClassName = config('laravel-security.database.password_history_model');
         return $modelClassName::create([
             'user_id' => $event->user->id,
+            'user_class' => get_class($event->user),
             'password' => $event->user->password
         ]);
     }

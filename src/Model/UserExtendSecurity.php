@@ -27,7 +27,10 @@ class UserExtendSecurity extends Model
 
     public function user()
     {
-        return $this->belongsTo(config('laravel-security.database.user_model') ?: 'App\User');
+        if (!$this->user_class) {
+            return null;
+        }
+        return $this->belongsTo($this->user_class ?: 'App\User');
     }
 
 }

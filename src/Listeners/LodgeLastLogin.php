@@ -30,6 +30,7 @@ class LodgeLastLogin
         return $modelClassName::updateOrCreate(
             [
                 'user_id' => $event->user->id,
+                'user_class' => get_class($event->user),
             ],
             [
                 'last_loggein_at' => Carbon::now()

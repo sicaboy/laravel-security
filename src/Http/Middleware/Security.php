@@ -7,6 +7,7 @@ use Closure;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Sicaboy\LaravelSecurity\Helpers\SecurityHelper;
 use Sicaboy\LaravelSecurity\Model\UserExtendSecurity;
 
 class Security
@@ -14,10 +15,13 @@ class Security
 
     protected $generator;
     protected $user;
+    protected $helper;
+    protected $request;
 
-    public function __construct(UrlGenerator $generator)
+    public function __construct(UrlGenerator $generator, SecurityHelper $helper)
     {
         $this->generator = $generator;
+        $this->helper = $helper;
     }
 
     /**
@@ -27,29 +31,34 @@ class Security
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, $group = 'default')
     {
-        // If user not login
-        $closure = config('laravel-security.auth_user_closure', function() {
-            return Auth::user();
-        });
-        $this->user = call_user_func($closure);
+        $this->user = $this->helper->getAuthUserModel($group);
+        $this->request = $request;
         if (!$this->user) {
-            return redirect()->route(config('laravel-mfa.login_route', 'login'));
+            // No Auth::user returned. Not login yet
+            return $request->wantsJson()
+                ? response()->json([
+                    'error' => 'Login required',
+                    'url' => $this->helper->getConfigByGroup('login_route', $group, 'login')
+                ], 403)
+                : redirect()->route(
+                    $this->helper->getConfigByGroup('login_route', $group, 'login')
+                );
         }
 
-        if ($redirect = $this->handleCheckLockedAccount()) {
+        if ($redirect = $this->handleCheckLockedAccount($group)) {
             return $redirect;
         }
 
-        if ($redirect = $this->handleForceChangePassword()) {
+        if ($redirect = $this->handleForceChangePassword($group)) {
             return $redirect;
         }
 
         return $next($request);
     }
 
-    protected function handleCheckLockedAccount()
+    protected function handleCheckLockedAccount($group)
     {
         // Already checked in this session
         if (Session::has('check_locked_account_completed')) {
@@ -58,20 +67,21 @@ class Security
 //        Session::put('check_locked_account_completed', true);
         $modelClassName = config('laravel-security.database.user_security_model');
         $accountLocked = $modelClassName::where('user_id', $this->user->id)
+            ->where('user_class', get_class($this->user))
             ->where('status', '<=', UserExtendSecurity::STATUS_LOCKED)
             ->exists();
 
         if ($accountLocked) {
-            $func = config('laravel-security.password_policy.auto_lockout_inactive_accounts.locked_account_closure');
-            return call_user_func($func);
+            $func = $this->helper->getConfigByGroup('password_policy.auto_lockout_inactive_accounts.locked_account_closure', $group);
+            return call_user_func($func, $this->request);
         }
         return false;
     }
 
-    protected function handleForceChangePassword()
+    protected function handleForceChangePassword($group)
     {
         // Function not enabled
-        if (config('laravel-security.password_policy.force_change_password.enabled') !== true) {
+        if ($this->helper->getConfigByGroup('password_policy.force_change_password.enabled', $group) !== true) {
             return false;
         }
 
@@ -80,9 +90,10 @@ class Security
             return false;
         }
 
-        $days = config('laravel-security.password_policy.force_change_password.days_after_last_change', 90);
+        $days = $this->helper->getConfigByGroup('password_policy.force_change_password.days_after_last_change', $group, 90);
         $modelClassName = config('laravel-security.database.user_security_model');
         $passwordRecentlyUpdated = $modelClassName::where('user_id', $this->user->id)
+            ->where('user_class', get_class($this->user))
             ->whereDate('last_password_updated_at', '>', Carbon::now()->subDays($days))
             ->exists();
 
@@ -93,9 +104,18 @@ class Security
         }
 
         // Need to change password
-        $url = config('laravel-security.password_policy.force_change_password.change_password_url');
+        $url = $this->helper->getConfigByGroup('password_policy.force_change_password.change_password_url', $group);
         $url .= (strpos($url, '?') === false) ? '?' : '&';
         $url .= 'referer=' . urlencode($this->generator->previous());
-        return redirect()->to($url);
+
+
+        return $this->request->wantsJson()
+            ? response()->json([
+                'error' => 'Change password required',
+                'message' => 'Please update your password',
+                'code' => 'PASSWORD_EXPIRED',
+                'url' => $url
+            ], 403)
+            : redirect()->to($url);
     }
 }

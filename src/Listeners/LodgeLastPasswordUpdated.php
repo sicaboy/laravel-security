@@ -30,6 +30,7 @@ class LodgeLastPasswordUpdated
         return $modelClassName::updateOrCreate(
             [
                 'user_id' => $event->user->id,
+                'user_class' => get_class($event->user),
             ],
             [
                 'last_password_updated_at' => Carbon::now()

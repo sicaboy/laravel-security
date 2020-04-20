@@ -5,6 +5,7 @@ namespace Sicaboy\LaravelSecurity\Console\Commands;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
+use Sicaboy\LaravelSecurity\Helpers\SecurityHelper;
 use Sicaboy\LaravelSecurity\Model\UserExtendSecurity;
 
 class LockoutInactiveAccounts extends Command
@@ -28,9 +29,10 @@ class LockoutInactiveAccounts extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(SecurityHelper $helper)
     {
         parent::__construct();
+        $this->helper = $helper;
     }
 
     /**
@@ -38,21 +40,26 @@ class LockoutInactiveAccounts extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
-        // Delete accounts with xxx days of no activity
-        $config = config('laravel-security.password_policy.auto_lockout_inactive_accounts');
-        if(empty($config)) {
-            $this->error("Invalid Config");
+    public function handle() {
+        $groups = array_keys(config("laravel-security.group"));
+        $groups[] = 'default';
+        foreach ($groups as $group) {
+            $this->handleByGroup($group);
         }
-        if ($config['enabled'] !== true) {
+    }
+
+
+    public function handleByGroup($group) {
+        // Delete accounts with xxx days of no activity
+        if ($this->helper->getConfigByGroup('password_policy.auto_lockout_inactive_accounts.enabled', $group) !== true) {
             $this->error("Disabled");
             return;
         }
-        $days = $config['days_after_last_login'];
+        $days = $this->helper->getConfigByGroup('password_policy.auto_lockout_inactive_accounts.days_after_last_login', $group);
         $this->info("Lock out accounts with {$days} days of no activity");
         $modelClassName = config('laravel-security.database.user_security_model');
         $userExtends = $modelClassName::whereDate('last_loggein_at', '<', Carbon::today()->subDays($days))
+            ->where('user_class', $this->helper->getConfigByGroup('user_model', $group))
             ->where('status', '>', UserExtendSecurity::STATUS_LOCKED)
             ->get();
         foreach ($userExtends as $userExtend) {
@@ -60,16 +67,15 @@ class LockoutInactiveAccounts extends Command
             $userExtend->status = UserExtendSecurity::STATUS_LOCKED;
             $userExtend->save();
 
-            if($config['email_notification']['enabled'] == true) {
-                Mail::send($config['email_notification']['template'], [
+            if($this->helper->getConfigByGroup('password_policy.auto_lockout_inactive_accounts.email_notification.enabled', $group) == true) {
+                Mail::send($this->helper->getConfigByGroup('password_policy.auto_delete_inactive_accounts.email_notification.template', $group), [
                     'user' => $userExtend->user,
                     'days' => $days,
-                ], function($message) use ($userExtend, $config) {
+                ], function($message) use ($userExtend, $group) {
                     $message->to($userExtend->user->email);
-                    $message->subject($config['email_notification']['subject']);
+                    $message->subject($this->helper->getConfigByGroup('password_policy.auto_lockout_inactive_accounts.email_notification.subject', $group));
                 });
             }
         }
-
     }
 }

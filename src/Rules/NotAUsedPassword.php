@@ -18,31 +18,28 @@ class NotAUsedPassword implements Rule
     /** @var string */
     protected $attribute;
 
-    /**
-     * Only check used password for userId
-     * @var integer
-     */
-    protected $userId;
+    protected $user;
 
-    public function __construct($userId = null, $modelClassName = null)
+    public function __construct($user = null, $modelClassName = null)
     {
         if(!$modelClassName) {
             $modelClassName = config('laravel-security.database.password_history_model');
         }
-        $this->userId = $userId;
+        $this->user = $user;
         $this->modelClassName = $modelClassName;
     }
 
 
     public function passes($attribute, $value): bool
     {
-        if (!$this->userId) {
+        if (!$this->user) {
             return true;
         }
         // $this->attribute = $attribute;
         $model = $this->modelClassName::select('password');
-        if(!empty($this->userId)) {
-            $model->where('user_id', $this->userId);
+        if(!empty($this->user->id)) {
+            $model->where('user_id', $this->user->id);
+            $model->where('user_class', get_class($this->user));
         }
         $allUsedPasswords = $model->get();
         $isOldPassword = false;
