@@ -1,7 +1,7 @@
 {
     "name": "sicaboy/laravel-security",
     "type": "library",
-    "description": "",
+    "description": "This package can be used to enhance the user security of Laravel projects.",
     "keywords": [
         "laravel",
         "passwords",
